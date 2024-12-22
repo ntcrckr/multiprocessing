@@ -2,6 +2,9 @@ package ru.ntcrckr
 
 import kotlinx.coroutines.*
 
+@OptIn(DelicateCoroutinesApi::class)
+private val sortContext = newFixedThreadPoolContext(4, "sorting")
+
 suspend fun IntArray.parallelQuicksort(
     left: Int = 0,
     right: Int = size,
@@ -12,9 +15,9 @@ suspend fun IntArray.parallelQuicksort(
     }
 
     val pivot = getPivot(left, right)
-    Dispatchers.Main {
-        val leftJob = launch(Dispatchers.Main) { parallelQuicksort(left, pivot) }
-        val rightJob = launch(Dispatchers.Main) { parallelQuicksort(pivot + 1, right) }
+    sortContext {
+        val leftJob = launch(sortContext) { parallelQuicksort(left, pivot) }
+        val rightJob = launch(sortContext) { parallelQuicksort(pivot + 1, right) }
         leftJob.join()
         rightJob.join()
     }

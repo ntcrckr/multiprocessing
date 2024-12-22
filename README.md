@@ -4,25 +4,26 @@
 Результаты запуска теста (размер 10^8, 4 процесса, 5 запусков):
 
 ```
-parallel sort: 4.520969625s
-parallel sort: 5.098575625s
-parallel sort: 4.432676917s
-parallel sort: 4.902452959s
-parallel sort: 4.555772833s
-Sum time: 23.510447959s
-Average time: 4.702089591s
-Fastest time: 4.432676917s
+parallel sort: 4.511731708s
+parallel sort: 4.028979333s
+parallel sort: 4.337783083s
+parallel sort: 4.491651750s
+parallel sort: 4.744795917s
+Sum time: 22.114941791s
+Average time: 4.422988358s
+Fastest time: 4.028979333s
 ```
 
 ```
-sort: 9.353872958s
-sort: 9.314223750s
-sort: 9.416051625s
-sort: 9.441027500s
-sort: 9.341818333s
-Sum time: 46.866994166s
-Average time: 9.373398833s
-Fastest time: 9.314223750s
+sort: 9.247297084s
+sort: 9.332082667s
+sort: 9.093567166s
+sort: 9.034138833s
+sort: 9.217312167s
+Sum time: 45.924397917s
+Average time: 9.184879583s
+Fastest time: 9.034138833s
 ```
 
-Получается, что параллельный сорт в среднем быстрее в 1,9934538999
+Получается, что параллельный сорт в среднем быстрее в 2,076623052 раза, 
+а самый быстрый из запусков быстрее в 2,2422896933 раза.

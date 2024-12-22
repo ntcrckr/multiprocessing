@@ -1,13 +1,4 @@
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ru.ntcrckr.measured
 import ru.ntcrckr.parallelQuicksort
@@ -32,14 +23,12 @@ class ComparisonTest {
     @Test
     fun `large parallel quicksort`() = measureMultipleTimes { array ->
         var time = Duration.ZERO
-        runTest {
-            // given
-            array.shuffle()
-            // when
-            time = measured("parallel sort") { array.parallelQuicksort() }.toJavaDuration()
-            // then
-            assert(array.isSorted())
-        }
+        // given
+        array.shuffle()
+        // when
+        time = measured("parallel sort") { array.parallelQuicksort() }.toJavaDuration()
+        // then
+        assert(array.isSorted())
         time
     }
 
@@ -64,21 +53,5 @@ class ComparisonTest {
             }
         }
         return true
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private val sortPool = newFixedThreadPoolContext(4, "sorting")
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @BeforeEach
-    fun setUp() {
-        Dispatchers.setMain(sortPool)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
-        sortPool.close()
     }
 }
