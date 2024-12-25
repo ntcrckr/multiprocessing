@@ -1,23 +1,27 @@
+import CubicGraph.Node
 import java.util.LinkedList
 import java.util.Queue
 
+fun bfsSeq(graph: CubicGraph, start: Node): IntArray {
+    val queue: Queue<Node> = LinkedList()
+    val result = IntArray(graph.nodes.size) { -1 }
 
-// Sequential BFS
-fun bfsSeq(graph: Map<Triple<Int, Int, Int>, List<Triple<Int, Int, Int>>>, start: Triple<Int, Int, Int>): Set<Triple<Int, Int, Int>> {
-    val visited = HashSet<Triple<Int, Int, Int>>()
-    val queue: Queue<Triple<Int, Int, Int>> = LinkedList()
+    result[graph.getIndex(start)] += 1
     queue.add(start)
-    visited.add(start)
 
     while (queue.isNotEmpty()) {
         val node = queue.poll()
-        for (neighbor in graph[node] ?: emptyList()) {
-            if (neighbor !in visited) {
-                visited.add(neighbor)
-                queue.add(neighbor)
+
+        for (neighbour in graph.getNeighbours(node)) {
+            val neighbourIndex = graph.getIndex(neighbour)
+
+            if (result[neighbourIndex] == -1) {
+                val nodeIndex = graph.getIndex(node)
+                result[neighbourIndex] = result[nodeIndex] + 1
+                queue.add(neighbour)
             }
         }
     }
 
-    return visited
+    return result
 }

@@ -1,30 +1,28 @@
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import CubicGraph.Node
+import java.util.concurrent.ForkJoinPool
 
-// Parallel BFS
-suspend fun bfsPar(
-    graph: Map<Triple<Int, Int, Int>, List<Triple<Int, Int, Int>>>,
-    start: Triple<Int, Int, Int>,
+fun bfsPar(
+    graph: CubicGraph,
+    start: Node,
     numProcesses: Int
-): Set<Triple<Int, Int, Int>> {
-    val visited = HashSet<Triple<Int, Int, Int>>()
-    var level = setOf(start)
-    visited.add(start)
+): IntArray {
+    val forkPool = ForkJoinPool(numProcesses)
 
-    while (level.isNotEmpty()) {
-        val chunks = level.chunked(level.size / numProcesses + 1)
-        val deferred = chunks.map { chunk ->
-            CoroutineScope(Dispatchers.Default).async {
-                bfsWorker(graph, chunk.toSet(), visited)
-            }
+    val result = IntArray(graph.nodes.size) { -1 }
+    result[graph.getIndex(start)] += 1
+
+    var front: MutableList<Node> = mutableListOf()
+    front.add(start)
+
+    while (front.isNotEmpty()) {
+        val worker = bfsWorker(graph, result)
+        val task = {
+            front.parallelStream()
+                .flatMap { worker(it) }
+                .toList()
         }
-
-        val newLevel = deferred.awaitAll().flatten().toSet()
-        visited.addAll(newLevel)
-        level = newLevel
+        front = forkPool.submit(task).get()
     }
 
-    return visited
+    return result
 }
